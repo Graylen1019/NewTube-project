@@ -1,4 +1,9 @@
-import { SidebarHeader, useSidebar, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  SidebarHeader,
+  useSidebar,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { useUser } from "@clerk/nextjs";
@@ -22,20 +27,19 @@ export const StudioSidebarheader = () => {
 
   if (state === "collapsed") {
     return (
-        <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Your Profile" asChild >
-                <Link href="/users/current">
-                    <UserAvatar 
-                    imageUrl={user.imageUrl}
-                    name={user.fullName ?? "User"}
-                    size="xs"
-                    />
-                    <span className="text-sm">Youre Profile</span>
-                </Link>
-            </SidebarMenuButton>
-        </SidebarMenuItem>
-
-    )
+      <SidebarMenuItem>
+        <SidebarMenuButton tooltip="Your Profile" asChild>
+          <Link href="/users/current">
+            <UserAvatar
+              imageUrl={user.imageUrl}
+              name={user.fullName ?? "User"}
+              size="xs"
+            />
+            <span className="text-sm">Youre Profile</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
   }
 
   return (

@@ -3,7 +3,6 @@ import { videos } from "@/db/schema";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { ZAddCommand } from "@upstash/redis";
 import { eq, and, or, lt, desc } from "drizzle-orm";
 
 export const studioRouter = createTRPCRouter({

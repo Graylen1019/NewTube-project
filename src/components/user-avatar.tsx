@@ -33,7 +33,10 @@ export const UserAvatar = ({
   onClick,
 }: UserAvatarProps) => {
   return (
-    <Avatar className={cn(avatarVariants({ size, className }))} onClick={onClick}>
+    <Avatar
+      className={cn(avatarVariants({ size, className }))}
+      onClick={onClick}
+    >
       <AvatarImage src={imageUrl} alt="name" />
     </Avatar>
   );

@@ -23,7 +23,6 @@ export const StudioSidebar = () => {
       <SidebarContent className="bg-background">
         <SidebarGroup>
           <SidebarMenu>
-
             <StudioSidebarheader />
             <SidebarMenuItem>
               <SidebarMenuButton
