@@ -25,6 +25,7 @@ export const VideoThumbnail = ({
           className="size-full object-cover group-hover:opacity-0"
         />
         <Image
+          unoptimized={!!previewUrl}
           src={previewUrl ?? "/placeholder.svg"}
           alt={title}
           layout="fill"
@@ -33,7 +34,7 @@ export const VideoThumbnail = ({
       </div>
       {/* Video Duration box */}
       <div className="absolute bottom-2 right-2 px-1 py-0 5 rounded bg-black/55 text-white text-xs font-medium">
-      {formatDuration(duration || 0)}
+        {formatDuration(duration || 0)}
       </div>
     </div>
   );
