@@ -15,6 +15,7 @@ import {
   CopyIcon,
   Globe2Icon,
   ImagePlusIcon,
+  Loader2Icon,
   LockIcon,
   MoreVerticalIcon,
   RotateCcwIcon,
@@ -101,7 +102,7 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
       toast.error("Something Went Wrong");
     },
   });
-  
+
   const restoreThumbnail = trpc.videos.restoreThumbnail.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
@@ -113,9 +114,33 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     },
   });
 
+  const generateDescription = trpc.videos.generateDescription.useMutation({
+    onSuccess: () => {
+      toast.success("Background Job Started", {
+        description: "This May Take Some Time!",
+      });
+    },
+    onError: () => {
+      toast.error("Something Went Wrong");
+    },
+  });
+
+  const generateTitle = trpc.videos.generateThumbnail.useMutation({
+    onSuccess: () => {
+      toast.success("Background Job Started", {
+        description: "This May Take Some Time!",
+      });
+    },
+    onError: () => {
+      toast.error("Something Went Wrong");
+    },
+  });
+
   const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
     onSuccess: () => {
-      toast.success("Background Job Started", { description: "This May Take Some Time!" });
+      toast.success("Background Job Started", {
+        description: "This May Take Some Time!",
+      });
     },
     onError: () => {
       toast.error("Something Went Wrong");
@@ -148,10 +173,10 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 
   return (
     <>
-      <ThumbnailUploadModal 
-      open={thumbnailModalOpen}
-      onOpenChange={setThumbnailModalOpen}
-      videoId={videoId}
+      <ThumbnailUploadModal
+        open={thumbnailModalOpen}
+        onOpenChange={setThumbnailModalOpen}
+        videoId={videoId}
       />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -185,15 +210,32 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
             </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            <div className="sapce-y-8 lg:col-span-3">
+            <div className="space-y-8 lg:col-span-3">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Title
-                      {/* TDOD: ADD AI GENERATE BUTTON */}
+                      <div className="flex items-center gap-x-2">
+                        Title
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          type="button"
+                          className="rounded-full size-6 [&_svg]:size-3"
+                          onClick={() => {
+                            generateTitle.mutate({ id: videoId });
+                          }}
+                          disabled={generateTitle.isPending}
+                        >
+                          {generateTitle.isPending ? (
+                            <Loader2Icon className="animate-spin" />
+                          ) : (
+                            <SparkleIcon />
+                          )}
+                        </Button>
+                      </div>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -211,8 +253,25 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Description
-                      {/* TDOD: ADD AI GENERATE BUTTON */}
+                    <div className="flex items-center gap-x-2">
+                        Description
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          type="button"
+                          className="rounded-full size-6 [&_svg]:size-3"
+                          onClick={() => {
+                            generateDescription.mutate({ id: videoId });
+                          }}
+                          disabled={generateDescription.isPending}
+                        >
+                          {generateDescription.isPending ? (
+                            <Loader2Icon className="animate-spin" />
+                          ) : (
+                            <SparkleIcon />
+                          )}
+                        </Button>
+                      </div>
                     </FormLabel>
                     <FormControl>
                       <Textarea
@@ -253,19 +312,23 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="start" side="right">
                             <DropdownMenuItem
-                            onClick={() => setThumbnailModalOpen(true)}
+                              onClick={() => setThumbnailModalOpen(true)}
                             >
                               <ImagePlusIcon className="size-4 mr-1" />
                               Change
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                            onClick={() => generateThumbnail.mutate()}
+                              onClick={() =>
+                                generateThumbnail.mutate({ id: videoId })
+                              }
                             >
                               <SparkleIcon className="size-4 mr-1" />
                               AI-Generate
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                            onClick={() => restoreThumbnail.mutate({ id: videoId })}
+                              onClick={() =>
+                                restoreThumbnail.mutate({ id: videoId })
+                              }
                             >
                               <RotateCcwIcon className="size-4 mr-1" />
                               Restore

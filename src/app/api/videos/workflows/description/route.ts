@@ -8,19 +8,14 @@ interface InputType {
   userId: string;
 }
 
-const TITLE_SYSTEM_PROMPT = `You are a video title generator. Your task is to generate a 
-catchy and relevant title for a video based on its transcript. 
-
-PLease Follow These Guidelines: 
-- Be concise and clear, but descriptive, using relevant keywords to improve descoverability.
-- Highlight the most compelling or unique aspects of the video content.
-- Avoid jargon or overly technical language, unless the video is intended for a specialized audience.
-- Use action-oriented phrasing or clear value propositions where applicable.
-- ensure the title is 3-8 words long, and no more than 100 characters.
-- ONLY return the title as plain text, without any additional explanation or formatting.
-- Do not include any hashtags, links, or references to other platforms.
-- Do not include any quotations or asterisks.
-- Do not include any emojis or special characters.`;
+const DESCRIPTION_SYSTEM_PROMPT = 
+`You are a video description generator. Your task is to summarize the transcript of a video.
+Please Follow These Guidelines:
+- be brief. Condense the content into a summary that captures the key points and main ideas without losing imporatnt details.
+- Avoid jargon or overly technical language, unless neccessary for the context.
+- Focus on the most critical information, ignoring filler, repetitive statements, or irrelevant tangents.
+- ONLY return the summary, no other text, annoations, comments, or explanations.
+- Aim for a summary that is 3-5 sentences long, and no more than 200 characters.`;
 
 export const { POST } = serve(async (context) => {
   const input = context.requestPayload as InputType;
@@ -51,7 +46,7 @@ export const { POST } = serve(async (context) => {
     return text;
   });
 
-  const { body } = await context.api.openai.call("Generate Title", {
+  const { body } = await context.api.openai.call("Generate Description", {
     token: process.env.OPENAI_API_KEY!,
     operation: "chat.completions.create",
     body: {
@@ -59,7 +54,7 @@ export const { POST } = serve(async (context) => {
       messages: [
         {
           role: "system",
-          content: TITLE_SYSTEM_PROMPT,
+          content: DESCRIPTION_SYSTEM_PROMPT,
         },
         {
           role: "user",
@@ -69,16 +64,16 @@ export const { POST } = serve(async (context) => {
     },
   });
 
-  const title = body.choices[0]?.message.content;
+  const description = body.choices[0]?.message.content;
 
-  if (!title) {
+  if (!description) {
     throw new Error("Title not found");
   }
 
   await context.run("update-video", async () => {
     await db
       .update(videos)
-      .set({ title: title || video.title })
+      .set({ description: description || video.description })
       .where(and(eq(videos.id, video.id), eq(videos.userId, video.userId)));
   });
 });
