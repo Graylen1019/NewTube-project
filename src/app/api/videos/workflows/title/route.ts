@@ -11,15 +11,15 @@ interface InputType {
 const TITLE_SYSTEM_PROMPT = `You are a video title generator. Your task is to generate a 
 catchy and relevant title for a video based on its transcript. 
 
-PLease Follow These Guidelines: 
-- Be concise and clear, but descriptive, using relevant keywords to improve descoverability.
+Please Follow These Guidelines: 
+- Be concise and clear, but descriptive, using relevant keywords to improve discoverability.
 - Highlight the most compelling or unique aspects of the video content.
 - Avoid jargon or overly technical language, unless the video is intended for a specialized audience.
 - Use action-oriented phrasing or clear value propositions where applicable.
-- ensure the title is 3-8 words long, and no more than 100 characters.
+- Ensure the title is 3-8 words long, and no more than 100 characters.
 - ONLY return the title as plain text, without any additional explanation or formatting.
 - Do not include any hashtags, links, or references to other platforms.
-- Do not include any quotations or asterisks.
+- Do not include any quotations, quotation marks, annotations, or asterisks.
 - Do not include any emojis or special characters.`;
 
 export const { POST } = serve(async (context) => {
