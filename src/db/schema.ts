@@ -106,8 +106,8 @@ export const videoViews = pgTable(
     userId: uuid("user_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
-    videosId: uuid("video_id")
-      .references(() => users.id, { onDelete: "cascade" })
+    videoId: uuid("video_id")
+      .references(() => videos.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -115,7 +115,7 @@ export const videoViews = pgTable(
   (t) => [
     primaryKey({
       name: "video_views_pk",
-      columns: [t.userId, t.videosId],
+      columns: [t.userId, t.videoId],
     }),
   ]
 );
@@ -126,7 +126,7 @@ export const videoViewRelation = relations(videoViews, ({ one }) => ({
     references: [users.id],
   }),
   videos: one(videos, {
-    fields: [videoViews.videosId],
+    fields: [videoViews.videoId],
     references: [videos.id],
   })
 }));
