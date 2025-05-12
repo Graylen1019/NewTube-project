@@ -27,11 +27,10 @@ export const VideoMenu = ({ videoId, variant, onRemove }: VideoMenuProps) => {
     }/videos/${videoId}`;
     navigator.clipboard.writeText(fullUrl);
     toast.success("Video link copied to clipboard");
-
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant={variant} size="icon" className="rounded-full">
           <MoreVerticalIcon />
