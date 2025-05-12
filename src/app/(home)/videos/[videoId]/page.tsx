@@ -14,6 +14,8 @@ const Page = async ({ params }: VideoPageProps) => {
 
   void trpc.videos.getOne.prefetch({ id: videoId });
   // You can use the videoId to fetch data from your API or database
+  void trpc.comments.getMany.prefetch({ videoId: videoId });
+  // TODO: Dont forget to change to prefetch infinite
 
 
   return (
