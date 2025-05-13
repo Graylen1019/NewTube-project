@@ -10,14 +10,29 @@ import { z } from "zod";
 import { trpc } from "@/trpc/client";
 import { commentInsertSchema } from "@/db/schema";
 
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 
 interface CommentFormProps {
   videoId: string;
+  parentId?: string;
   onSuccess?: () => void;
+  onCancel?: () => void;
+  variant?: "comment" | "reply";
 }
 
-export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
+export const CommentForm = ({
+  videoId,
+  parentId,
+  onSuccess,
+  onCancel,
+  variant = "comment",
+}: CommentFormProps) => {
   const clerk = useClerk();
   const { user } = useUser();
 
@@ -26,6 +41,7 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
     onSuccess: () => {
       toast.success("Comment added!");
       utils.comments.getMany.invalidate({ videoId });
+      utils.comments.getMany.invalidate({ videoId, parentId });
       form.reset();
       onSuccess?.();
     },
@@ -40,6 +56,7 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
   const form = useForm<z.infer<typeof commentInsertSchema>>({
     resolver: zodResolver(commentInsertSchema.omit({ userId: true }) as never),
     defaultValues: {
+      parentId,
       videoId,
       value: "",
     },
@@ -48,6 +65,11 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
   const handleSubmit = (value: z.infer<typeof commentInsertSchema>) => {
     create.mutate(value);
   };
+
+  const handleCancel = () => {
+    form.reset();
+    onCancel?.();
+  }
 
   return (
     <Form {...form}>
@@ -61,32 +83,39 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
           name={user?.username || "User"}
         />
         <div className="flex-1">
-          <FormField
-            name="value"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="Add A Comment"
-                    className="resize-none bg-transparent overflow-hidden min-h-0"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div>
-          <div className="justify-end gap-2 mt-2 flex">
-            <Button 
-            type="submit" 
-            size="sm"
-            disabled={create.isPending}
-            >
-              Comment
-            </Button>
+          <div className="flex-1">
+            <FormField
+              name="value"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder={
+                        variant === "reply"
+                          ? "Reply to this comment..."
+                          : "Add a comment..."
+                      }
+                      className="resize-none bg-transparent overflow-hidden min-h-0"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div>
+            <div className="justify-end gap-2 mt-2 flex">
+              {onCancel && (
+                <Button variant="ghost" type="button" onClick={handleCancel}>
+                  Cancel
+                </Button>
+              )}
+              <Button type="submit" size="sm" disabled={create.isPending}>
+                {variant === "reply" ? "reply" : "comment"}
+              </Button>
+            </div>
           </div>
         </div>
       </form>
