@@ -18,7 +18,7 @@ export const VideoThumbnail = ({
   return (
     <div className="relative group">
       {/* THumbnail wrapper */}
-      <div className="realtive w-full overflow-hidden rounded-xl aspect-video">
+      <div className="relative w-full overflow-hidden rounded-xl aspect-video">
         <Image
           src={imageUrl ?? THUMBNAIL_FALLBACK}
           alt={title}
@@ -34,7 +34,7 @@ export const VideoThumbnail = ({
         />
       </div>
       {/* Video Duration box */}
-      <div className="absolute bottom-2 right-2 px-1 py-0 5 rounded bg-black/55 text-white text-xs font-medium">
+      <div className="absolute bottom-2 right-2 px-1 py-0.5 rounded bg-black/55 text-white text-xs font-medium">
         {formatDuration(duration || 0)}
       </div>
     </div>
