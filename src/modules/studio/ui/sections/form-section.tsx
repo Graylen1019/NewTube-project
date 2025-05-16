@@ -74,7 +74,7 @@ const FormSectionSkeleton = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <div className="sapce-y-2">
+        <div className="space-y-2">
           <Skeleton className="h-7 w-32" />
           <Skeleton className="h-4 w-40" />
         </div>
@@ -161,6 +161,17 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
       toast.error("Something Went Wrong");
     },
   });
+  
+  const revalidate = trpc.videos.revalidate.useMutation({
+    onSuccess: () => {
+      utils.studio.getMany.invalidate();
+      utils.studio.getOne.invalidate({ id: videoId });
+      toast.success("Video revalidated");
+    },
+    onError: () => {
+      toast.error("Something Went Wrong");
+    },
+  });
 
   const restoreThumbnail = trpc.videos.restoreThumbnail.useMutation({
     onSuccess: () => {
@@ -233,7 +244,7 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
       />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex itemss-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold">Video Details:</h1>
               <p className="text-xs text-muted-foreground">
@@ -257,6 +268,13 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                   >
                     <TrashIcon className="size-4 mr-2" />
                     Delete
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => revalidate.mutate({ id: videoId })}
+                    className="cursor-pointer"
+                  >
+                    <RotateCcwIcon className="size-4 mr-2" />
+                    Revalidate
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -392,7 +410,6 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                        /
                       </div>
                     </FormControl>
                   </FormItem>
