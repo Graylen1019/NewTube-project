@@ -14,19 +14,19 @@ import { UserInfo } from "@/modules/users/ui/components/user-info";
 import { UserAvatar } from "@/components/user-avatar";
 
 import { VideoMenu } from "./video-menu";
-import { VideoThumbnail } from "./video-thubnail";
+import { VideoThumbnail, VideoThumbnailSkeleton } from "./video-thubnail";
 import { VideoGetManyOutput } from "../../types";
 
 const videoRowCardsVariants = cva("group flex min-w-0", {
-    variants: {
-        size: {
-            default: "gap-4",
-            compact: "gap-2",
-        },
+  variants: {
+    size: {
+      default: "gap-4",
+      compact: "gap-2",
     },
-    defaultVariants: {
-        size: "default",
-    },
+  },
+  defaultVariants: {
+    size: "default",
+  },
 });
 
 const thumbnailVariants = cva("relative flex-none", {
@@ -45,26 +45,59 @@ interface VideoRowCardProps extends VariantProps<typeof videoRowCardsVariants> {
   data: VideoGetManyOutput["items"][number];
   onRemove?: () => void;
 }
-export const videoRowCardSkeleton = () => {
+export const VideoRowCardSkeleton = ({
+  size = "default",
+}: VariantProps<typeof videoRowCardsVariants>) => {
   return (
-    <div>
-      <Skeleton />
+    <div className={videoRowCardsVariants({ size })}>
+      {/* Thumbnail */}
+      <div className={thumbnailVariants({ size })}>
+        <VideoThumbnailSkeleton />
+      </div>
+      {/* INFO */}
+      <div className="flex-1 min-w-0">
+        <div className="flex justify-between gap-x-2">
+          <div className="flex-1 min-w-0">
+            <Skeleton
+              className={cn("h-5 w-[40%]", size === "compact" && "h-4 w-[40%]")}
+            />
+            {size === "default" && (
+              <>
+                <Skeleton className="h-4 w-[20%] mt-1" />
+                <div className="flex items-center gap-2 my-3">
+                  <Skeleton className="size-8 rounded-full" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              </>
+            )}
+            {size === "compact" && (
+              <>
+                <Skeleton className="h-4 w-[50%] mt-1" />
+              </>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export const VideoRowCard = ({ data, size, onRemove }: VideoRowCardProps) => {
-    const compactViews = useMemo(() => {
-        return Intl.NumberFormat("en", {
-            notation: "compact"
-        }).format(data.viewCount);
-    }, [data.viewCount]);
-    const compactLikes = useMemo(() => {
-        return Intl.NumberFormat("en", {
-            notation: "compact"
-        }).format(data.LikeCount);
-    }, [data.LikeCount]);
-    
+export const VideoRowCard = ({
+  data,
+  size = "default",
+  onRemove,
+}: VideoRowCardProps) => {
+  const compactViews = useMemo(() => {
+    return Intl.NumberFormat("en", {
+      notation: "compact",
+    }).format(data.viewCount);
+  }, [data.viewCount]);
+  const compactLikes = useMemo(() => {
+    return Intl.NumberFormat("en", {
+      notation: "compact",
+    }).format(data.LikeCount);
+  }, [data.LikeCount]);
+
   return (
     <div className={videoRowCardsVariants({ size })}>
       <Link href={`/videos/${data.id}`} className={thumbnailVariants({ size })}>

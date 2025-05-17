@@ -55,6 +55,7 @@ import { THUMBNAIL_FALLBACK } from "@/modules/videos/constants";
 import { ThumbnailUploadModal } from "../components/thumbnail-upload-modal";
 import { ThumbnailGenerateModal } from "../components/thumbnail-generate-modal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { APP_URL } from "@/constants";
 
 interface FormSectionProps {
   videoId: string;
@@ -161,7 +162,7 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
       toast.error("Something Went Wrong");
     },
   });
-  
+
   const revalidate = trpc.videos.revalidate.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
@@ -215,10 +216,7 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     update.mutate(data);
   };
 
-  //  TODO: Change if deploying not in url
-  const fullUrl = `${
-    process.env.VERCEL_URL || "https://localhost:3000"
-  }/videos/${videoId}`;
+  const fullUrl = `${APP_URL}/videos/${videoId}`;
   const [isCopied, setIsCopied] = useState(false);
 
   const onCopy = async () => {
@@ -252,7 +250,10 @@ export const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
               </p>
             </div>
             <div className="flex items-center gap-x-2">
-              <Button type="submit" disabled={update.isPending || !form.formState.isDirty}>
+              <Button
+                type="submit"
+                disabled={update.isPending || !form.formState.isDirty}
+              >
                 Save
               </Button>
               <DropdownMenu>
