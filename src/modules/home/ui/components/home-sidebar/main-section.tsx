@@ -20,7 +20,7 @@ const item = [
   },
   {
     title: "Subscriptions",
-    url: "/feed/subscriptions",
+    url: "/feed/subscribed",
     icon: PlaySquareIcon,
     auth: true,
   },
