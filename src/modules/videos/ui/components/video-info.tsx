@@ -25,6 +25,8 @@ export const VideoInfoSkeleton = () => {
 };
 
 export const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
+
+  
   const compactViews = useMemo(() => {
     return Intl.NumberFormat("en", {
       notation: "compact",

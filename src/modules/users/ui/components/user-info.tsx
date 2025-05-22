@@ -26,6 +26,8 @@ interface UserInfoProps extends VariantProps<typeof userInfoVariants> {
 }
 
 export const UserInfo = ({ name, className, size }: UserInfoProps) => {
+
+  
   return (
     <div className={cn(userInfoVariants({ size, className }))}>
       <Tooltip>
