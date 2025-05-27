@@ -24,7 +24,8 @@ export const users = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     clerkId: text("clerk_id").unique().notNull(),
     name: text("name").notNull(),
-    // TODO: Add banner
+    bannerUrl: text("banner_url"),
+    bannerKey: text("banner_key"),
     imageUrl: text("image_url").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -117,7 +118,6 @@ export const videos = pgTable("videos", {
   previewKey: text("preview_key"),
   duration: integer("duration").default(0).notNull(),
   visibility: videoVisibility("visibility").default("Private").notNull(),
-
   userId: uuid("user_id")
     .references(() => users.id, {
       onDelete: "cascade",
